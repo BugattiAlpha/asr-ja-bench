@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# 生成物（音声・文字起こし結果）は再生成可能なので追跡しない
+data/testset/*.wav
+data/outputs/
+
+data/mictest*/
+
+# 記事の下書き・設計仕様はサイト側の資産なので公開リポジトリには含めない
+claudedocs/article-draft*.md
+docs/superpowers/
+
+# 本人の声の録音に由来するもの（公開しない）
+data/gaintest/
+data/gaintest_results/
+claudedocs/mictest-*.json

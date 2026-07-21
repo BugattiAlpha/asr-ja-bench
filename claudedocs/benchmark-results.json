@@ -1,0 +1,118 @@
+{
+ "clean": {
+  "parakeet": {
+   "cer": 0.071,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0593,
+   "window_loops": 0,
+   "chars": 119,
+   "reference_chars": 148
+  },
+  "whisper": {
+   "cer": 0.0129,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0704,
+   "window_loops": 0,
+   "chars": 144,
+   "reference_chars": 148
+  },
+  "whisper-vad": {
+   "cer": 0.1032,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0764,
+   "window_loops": 0,
+   "chars": 158,
+   "reference_chars": 148
+  }
+ },
+ "repetition": {
+  "parakeet": {
+   "cer": 0.0948,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.2903,
+   "window_loops": 0,
+   "chars": 94,
+   "reference_chars": 121
+  },
+  "whisper": {
+   "cer": 0.0172,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.3267,
+   "window_loops": 0,
+   "chars": 102,
+   "reference_chars": 121
+  },
+  "whisper-vad": {
+   "cer": 0.0172,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.3675,
+   "window_loops": 0,
+   "chars": 118,
+   "reference_chars": 121
+  }
+ },
+ "noisy": {
+  "parakeet": {
+   "cer": 0.071,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0598,
+   "window_loops": 0,
+   "chars": 118,
+   "reference_chars": 148
+  },
+  "whisper": {
+   "cer": 0.0129,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0704,
+   "window_loops": 0,
+   "chars": 143,
+   "reference_chars": 148
+  },
+  "whisper-vad": {
+   "cer": 0.0,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0704,
+   "window_loops": 0,
+   "chars": 143,
+   "reference_chars": 148
+  }
+ },
+ "overlap": {
+  "parakeet": {
+   "cer": 0.3484,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.1189,
+   "window_loops": 0,
+   "chars": 144,
+   "reference_chars": 148
+  },
+  "whisper": {
+   "cer": 0.3484,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.1163,
+   "window_loops": 0,
+   "chars": 173,
+   "reference_chars": 148
+  },
+  "whisper-vad": {
+   "cer": 0.3677,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.1176,
+   "window_loops": 0,
+   "chars": 171,
+   "reference_chars": 148
+  }
+ }
+}

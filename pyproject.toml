@@ -1,0 +1,39 @@
+[project]
+name = "asr-ja-bench"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "datasets>=3.0",
+    "faster-whisper>=1.2.1",
+    "ml-dtypes>=0.5.1",
+    "nemo-toolkit[asr]>=2.5.0",
+    "pykakasi>=2.3.0",
+    "torch>=2.6.0",
+    "torchaudio>=2.6.0",
+]
+
+
+# PyTorch の CUDA ビルド用インデックス。explicit = true にして torch/torchaudio だけに
+# 限定する（既定インデックスにすると setuptools 等の共通パッケージまでここから解決され、
+# PyPI 側のバージョンが見えなくなって解決に失敗する）。
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu124" }
+torchaudio = { index = "pytorch-cu124" }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.uv]
+# NeMo が固定する texterrors==0.5.1 は sdist のみで、Windows ではビルドに
+# Visual Studio が要る。1.1.8 には cp312 win_amd64 の wheel があるので上書きする。
+# （texterrors は nemo.collections.asr の import 連鎖上にあり、除外はできない）
+override-dependencies = ["texterrors==1.1.8"]

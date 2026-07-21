@@ -1,0 +1,22 @@
+{
+ "clean": {
+  "audio": "data/testset\\clean.wav",
+  "reference_chars": 148,
+  "seconds": 36.3
+ },
+ "repetition": {
+  "audio": "data/testset\\repetition.wav",
+  "reference_chars": 121,
+  "seconds": 31.74
+ },
+ "noisy": {
+  "audio": "data/testset\\noisy.wav",
+  "reference_chars": 148,
+  "seconds": 36.3
+ },
+ "overlap": {
+  "audio": "data/testset\\overlap.wav",
+  "reference_chars": 148,
+  "seconds": 36.3
+ }
+}
