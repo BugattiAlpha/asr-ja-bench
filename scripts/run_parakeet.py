@@ -16,6 +16,8 @@ import os
 import subprocess
 import sys
 import tempfile
+import time
+import wave
 
 os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
 
@@ -71,9 +73,20 @@ def group_words(words: list[dict], gap: float = 0.6) -> list[dict]:
     return segments
 
 
+def wav_duration(path: str) -> float:
+    with wave.open(path, "rb") as fh:
+        return fh.getnframes() / float(fh.getframerate())
+
+
 def transcribe(model, wav: str) -> dict:
-    """1回分の文字起こし結果（全文＋セグメント）を返す。"""
+    """1回分の文字起こし結果（全文＋セグメント）を返す。
+
+    elapsed_sec は whisper 側と揃えるため、モデル読み込みと 16kHz 変換を含まない
+    推論そのものの時間にする。
+    """
+    started = time.perf_counter()
     results = model.transcribe([wav], timestamps=True)
+    elapsed = time.perf_counter() - started
     hyp = results[0]
 
     stamps = getattr(hyp, "timestamp", None) or {}
@@ -96,13 +109,24 @@ def transcribe(model, wav: str) -> dict:
     # 区間ごとに切り出して評価する用途のため、文字単位のタイムスタンプも残す
     # （セグメントは無音でまとめた結果、区間境界をまたぐことがある）
     units = [{"start": u["start"], "end": u["end"], "text": u["word"]} for u in normalized]
-    return {"text": str(hyp.text), "segments": segments, "units": units}
+    return {
+        "text": str(hyp.text),
+        "segments": segments,
+        "units": units,
+        "model": MODEL_ID,
+        "elapsed_sec": round(elapsed, 3),
+        "audio_sec": round(wav_duration(wav), 3),
+    }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("audio")
     parser.add_argument("--runs", type=int, default=1)
+    parser.add_argument(
+        "--run-offset", type=int, default=0,
+        help="出力の run 番号の開始位置-1。プロセスを分けて計測するときに使う",
+    )
     parser.add_argument("--outdir", default="data/outputs")
     args = parser.parse_args()
 
@@ -117,8 +141,9 @@ def main() -> int:
 
     wav = to_wav16k(args.audio)
     try:
-        for run in range(1, args.runs + 1):
-            print(f"--- run {run}/{args.runs} ---")
+        for i in range(1, args.runs + 1):
+            run = i + args.run_offset
+            print(f"--- run {run} ---")
             result = transcribe(model, wav)
             base = os.path.join(args.outdir, f"{stem}__parakeet__run{run}")
 
@@ -129,7 +154,12 @@ def main() -> int:
             with open(f"{base}.json", "w", encoding="utf-8") as fh:
                 json.dump(result, fh, ensure_ascii=False, indent=1)
 
-            print(f"  セグメント数: {len(result['segments'])} / 文字数: {len(result['text'])}")
+            rtf = result["elapsed_sec"] / result["audio_sec"] if result["audio_sec"] else float("nan")
+            print(
+                f"  セグメント数: {len(result['segments'])} / 文字数: {len(result['text'])}"
+                f" / 転写 {result['elapsed_sec']:.2f}s"
+                f"（音声 {result['audio_sec']:.1f}s・実時間比 {rtf:.3f}）"
+            )
             print(f"  出力: {base}.txt|.srt|.json")
     finally:
         os.unlink(wav)

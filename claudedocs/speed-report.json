@@ -1,0 +1,62 @@
+{
+ "parakeet": {
+  "model": "nvidia/parakeet-tdt_ctc-0.6b-ja",
+  "audio_sec": 109.204,
+  "runs": [
+   2.291,
+   2.251,
+   2.255,
+   2.26,
+   2.24
+  ],
+  "median_sec": 2.255,
+  "rtf": 0.0206,
+  "speedup_vs_realtime": 48.4,
+  "chars": 554
+ },
+ "whisper": {
+  "model": "large-v3",
+  "audio_sec": 109.204,
+  "runs": [
+   9.958,
+   10.11,
+   10.108,
+   10.183,
+   9.998
+  ],
+  "median_sec": 10.108,
+  "rtf": 0.0926,
+  "speedup_vs_realtime": 10.8,
+  "chars": 573
+ },
+ "turbo": {
+  "model": "large-v3-turbo",
+  "audio_sec": 109.204,
+  "runs": [
+   3.251,
+   3.362,
+   3.323,
+   3.371,
+   3.313
+  ],
+  "median_sec": 3.323,
+  "rtf": 0.0304,
+  "speedup_vs_realtime": 32.9,
+  "chars": 567
+ },
+ "kotoba": {
+  "model": "kotoba-tech/kotoba-whisper-v2.0-faster",
+  "audio_sec": 109.204,
+  "runs": [
+   3.38,
+   3.51,
+   3.523,
+   3.519,
+   3.455
+  ],
+  "median_sec": 3.51,
+  "rtf": 0.0321,
+  "speedup_vs_realtime": 31.1,
+  "chars": 525
+ }
+}
