@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cer import cer  # noqa: E402
 from metrics import detect_window_loops, longest_repeat_run, repetition_score  # noqa: E402
 
-CONFIGS = ["parakeet", "whisper", "whisper-vad"]
+DEFAULT_CONFIGS = ["parakeet", "whisper", "whisper-vad"]
 
 
 def load_runs(results_dir: str, audio: str, config: str) -> list[dict]:
@@ -35,7 +35,14 @@ def main() -> int:
     parser.add_argument("--testset", default="data/testset")
     parser.add_argument("--results", default="data/results")
     parser.add_argument("--out", default="claudedocs/benchmark-results.json")
+    parser.add_argument(
+        "--configs",
+        default=",".join(DEFAULT_CONFIGS),
+        help="集計するモデルの tag をカンマ区切りで（例: parakeet,whisper,turbo,kotoba）",
+    )
     args = parser.parse_args()
+
+    configs = [c.strip() for c in args.configs.split(",") if c.strip()]
 
     with open(os.path.join(args.testset, "manifest.json"), encoding="utf-8") as fh:
         manifest = json.load(fh)
@@ -49,7 +56,7 @@ def main() -> int:
         reference = open(ref_path, encoding="utf-8").read()
         report[audio] = {}
 
-        for config in CONFIGS:
+        for config in configs:
             runs = load_runs(args.results, audio, config)
             if not runs:
                 continue
