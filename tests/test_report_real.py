@@ -17,14 +17,15 @@ import pytest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
-# 実験ノート「その5」で公表した値（長音符バグ修正後）
+# 公表した値。parakeet / whisper は実験ノート「その5」（長音符バグ修正後）、
+# turbo / kotoba は続編記事（2026-07-21）の測定値。
 PUBLISHED = {
-    "broadcastmic": {"parakeet": 0.292, "whisper": 0.214},
-    "chatmic": {"parakeet": 0.198, "whisper": 0.171},
-    "v2_chatmic": {"parakeet": 0.089, "whisper": 0.093},
-    "v2_broadcast": {"parakeet": 0.467, "whisper": 0.346},
-    "ai_chatmic": {"parakeet": 0.066, "whisper": 0.055},
-    "ai_broadcast": {"parakeet": 0.107, "whisper": 0.058},
+    "broadcastmic": {"parakeet": 0.292, "whisper": 0.214, "turbo": 0.292, "kotoba": 0.342},
+    "chatmic": {"parakeet": 0.198, "whisper": 0.171, "turbo": 0.128, "kotoba": 0.358},
+    "v2_chatmic": {"parakeet": 0.089, "whisper": 0.093, "turbo": 0.125, "kotoba": 0.253},
+    "v2_broadcast": {"parakeet": 0.467, "whisper": 0.346, "turbo": 0.315, "kotoba": 0.447},
+    "ai_chatmic": {"parakeet": 0.066, "whisper": 0.055, "turbo": 0.058, "kotoba": 0.157},
+    "ai_broadcast": {"parakeet": 0.107, "whisper": 0.058, "turbo": 0.057, "kotoba": 0.126},
 }
 
 RESULTS = os.path.join(ROOT, "data", "mictest_results")
@@ -83,3 +84,51 @@ def test_mictest_reference_is_284_chars():
     except FileNotFoundError:
         pytest.skip("読み上げ原稿 script.json が無い環境")
     assert len(reference) == 284
+
+
+def test_pins_actually_run_when_data_is_present():
+    """実測データがあるのに全ピンが skip される事故を検出する。
+
+    ピンの skip は「データが無い公開クローン」を通すためのもので、
+    データが手元にあるならピンは実行されなければならない。skip だけで
+    緑になると、この回帰テストは何も守っていないことになる。
+    """
+    if not glob.glob(os.path.join(RESULTS, "*__run1.json")):
+        pytest.skip("実測データが無い環境（公開クローン）")
+    loadable = sum(
+        1
+        for name, row in PUBLISHED.items()
+        for config in row
+        if _load(name, config) is not None
+    )
+    assert loadable > 0, "実測データがあるのに公開値のピンが1件も実行されていない"
+
+
+def test_corrupted_bounds_are_rejected(tmp_path):
+    """区間が1つ混入した録音を別レジームと誤読しないことを固定する。
+
+    19区間の録音に発話級の区間を1つ足すと20区間になり、区間数だけの判定では
+    手動プロンプター進行として「解釈できてしまう」。長さ検証が拒否することを確認する。
+    """
+    import json as _json
+
+    import compare_mictest
+
+    src = os.path.join(
+        r"C:\Users\Cooliris\MY_Work_Space\mic_test_recorder\recordings",
+        "20260720_194031_15cm_BroadcastMic",
+        "meta.json",
+    )
+    if not os.path.exists(src):
+        pytest.skip("録音メタが無い環境")
+    with open(src, encoding="utf-8") as fh:
+        meta = _json.load(fh)
+    assert len(meta["section_bounds"]) == 19
+    # 末尾に発話級（10秒）の区間を混入させて20区間にする
+    last_end = float(meta["section_bounds"][-1][1])
+    meta["section_bounds"].append([last_end, last_end + 10.0])
+    (tmp_path / "meta.json").write_text(
+        _json.dumps(meta, ensure_ascii=False), encoding="utf-8"
+    )
+    with pytest.raises(ValueError):
+        compare_mictest.load_sections(str(tmp_path))

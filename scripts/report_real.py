@@ -55,8 +55,11 @@ ORDER = list(MICTEST) + list(NARRATION)
 
 
 def load_runs(results_dir: str, name: str, config: str) -> list[dict]:
-    paths = sorted(glob.glob(os.path.join(results_dir, f"{name}__{config}__run*.json")))
-    return [json.load(open(p, encoding="utf-8")) for p in paths]
+    runs = []
+    for p in sorted(glob.glob(os.path.join(results_dir, f"{name}__{config}__run*.json"))):
+        with open(p, encoding="utf-8") as fh:
+            runs.append(json.load(fh))
+    return runs
 
 
 def mictest_reference() -> str:
@@ -90,9 +93,11 @@ def main() -> int:
     args = parser.parse_args()
 
     configs = [c.strip() for c in args.configs.split(",") if c.strip()]
+    with open(NARRATION_REF, encoding="utf-8") as fh:
+        narration_ref = fh.read()
     references = {
         **{name: mictest_reference() for name in MICTEST},
-        **{name: open(NARRATION_REF, encoding="utf-8").read() for name in NARRATION},
+        **{name: narration_ref for name in NARRATION},
     }
 
     report: dict[str, dict] = {}
@@ -132,7 +137,12 @@ def main() -> int:
         fewest = min(scored.values())
         # 誤り2文字以内の差は勝敗として扱わない（1文字差を「勝ち」と数えない）
         best = [c for c, e in scored.items() if e <= fewest + 2]
-        verdict = "差なし" if len(best) == len(scored) else "/".join(best)
+        if len(scored) == 1:
+            verdict = f"{best[0]}（単独・比較なし）"
+        elif len(best) == len(scored):
+            verdict = "差なし"
+        else:
+            verdict = "/".join(best)
         print(f"{LABELS[name]:<24}{ref_chars:>7}{cells}    {verdict}（{fewest}字）")
 
     # --- 誤り文字数（CERの分子そのもの） ---

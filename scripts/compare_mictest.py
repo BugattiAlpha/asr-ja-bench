@@ -25,10 +25,20 @@ SCRIPT_JSON = r"C:\Users\Cooliris\MY_Work_Space\mic_test_recorder\script.json"
 NON_LEXICAL_SECTIONS = {6, 9}
 
 
+# 読み飛ばす無音区間の長さ上限（秒）。実測では gap が 2.00〜2.25s、
+# 手動進行のクリック区間が 0.50s、発話セクションは最短でも 8.4s なので
+# 5秒できれいに分離できる。
+_MAX_GAP_SEC = 5.0
+
+
 def _walk(script_sections: list[dict], bounds: list, has_gap) -> list[dict] | None:
     """has_gap(sec) が真のセクションの直後を無音区間として読み飛ばしつつ歩く。
 
-    区間をちょうど使い切ったときだけ結果を返す（使い切らなければレジーム違い）。
+    区間をちょうど使い切り、かつ読み飛ばした区間がすべて無音らしい長さ
+    （_MAX_GAP_SEC 未満）のときだけ結果を返す。区間数だけで判定すると、
+    余分な区間が1つ混入した 19+1 区間の録音を別レジームと誤読し、
+    全セクションの座標が1つずれた「もっともらしい嘘」を返しうる。
+    読み飛ばし対象に発話級の長さ（8秒超）が入っていたらレジーム違いとみなす。
     """
     sections, idx = [], 0
     for sec in script_sections:
@@ -37,6 +47,10 @@ def _walk(script_sections: list[dict], bounds: list, has_gap) -> list[dict] | No
         start, end = bounds[idx]
         idx += 1
         if has_gap(sec):
+            if idx < len(bounds):
+                g_start, g_end = bounds[idx]
+                if float(g_end) - float(g_start) >= _MAX_GAP_SEC:
+                    return None  # 読み飛ばそうとした区間が無音の長さではない
             idx += 1  # 直後の無音区間を読み飛ばす
         sections.append(
             {
@@ -122,7 +136,19 @@ def main() -> int:
     runs_by_config = {}
     for config in configs:
         paths = sorted(glob.glob(os.path.join(args.results, f"{args.name}__{config}__run*.json")))
-        runs_by_config[config] = [json.load(open(p, encoding="utf-8")) for p in paths]
+        runs = []
+        for p in paths:
+            with open(p, encoding="utf-8") as fh:
+                runs.append(json.load(fh))
+        # 文字/単語単位のタイムスタンプが無いモデル（例: kotoba は
+        # word_timestamps 非対応）は、区間切り出しが 15〜30 秒のセグメント単位に
+        # 落ちて他モデルと比較できない数字になる。黙って劣化させず除外する。
+        # 全文どうしの CER は report_real.py で測れる。
+        if runs and not runs[0].get("units"):
+            print(f"  ⚠ {config}: 単語タイムスタンプが無いため区間評価から除外"
+                  f"（全文CERは report_real.py を使う）")
+            continue
+        runs_by_config[config] = runs
 
     # --- 全体CER ---
     print(f"\n{'モデル':<12}{'全体CER':>10}{'実行間一致':>12}{'文字数':>8}")

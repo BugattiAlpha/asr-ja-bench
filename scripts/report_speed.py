@@ -60,10 +60,12 @@ def main() -> int:
     report = {}
 
     for config in configs:
-        paths = sorted(
+        runs = []
+        for p in sorted(
             glob.glob(os.path.join(args.results, f"{args.audio}__{config}__run*.json"))
-        )
-        runs = [json.load(open(p, encoding="utf-8")) for p in paths]
+        ):
+            with open(p, encoding="utf-8") as fh:
+                runs.append(json.load(fh))
         times = [r["elapsed_sec"] for r in runs if "elapsed_sec" in r]
         if not times:
             continue
@@ -82,6 +84,23 @@ def main() -> int:
     if not report:
         print("計測結果が見つからない")
         return 1
+
+    # 全構成が同じ音源を測っていることを確認する。違う長さの音源が混ざると、
+    # 最遅比や見出しの音声長が意味を失う。
+    durations = {c: v["audio_sec"] for c, v in report.items()}
+    if max(durations.values()) - min(durations.values()) > 0.05:
+        raise SystemExit(f"音源の長さが構成間で一致しない: {durations}")
+
+    # 各構成の実測値の開き（最大/最小）を見る。1.25倍を超えていたら、
+    # 計測中に GPU の混み具合が変わった疑いが強く、中央値が「速い状態」とも
+    # 「遅い状態」とも言えない数字になる。この状態の絶対値・比率は公開しない。
+    unstable = {
+        c: round(max(v["runs"]) / min(v["runs"]), 2)
+        for c, v in report.items()
+        if min(v["runs"]) > 0 and max(v["runs"]) / min(v["runs"]) > 1.25
+    }
+    if unstable:
+        print(f"\n⚠ 実測値の開きが大きい構成: {unstable}（GPU競合の疑い。測り直しを推奨）")
 
     audio_sec = next(iter(report.values()))["audio_sec"]
     slowest = max(v["median_sec"] for v in report.values())
