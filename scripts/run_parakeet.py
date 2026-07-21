@@ -123,6 +123,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("audio")
     parser.add_argument("--runs", type=int, default=1)
+    parser.add_argument(
+        "--run-offset", type=int, default=0,
+        help="出力の run 番号の開始位置-1。プロセスを分けて計測するときに使う",
+    )
     parser.add_argument("--outdir", default="data/outputs")
     args = parser.parse_args()
 
@@ -137,8 +141,9 @@ def main() -> int:
 
     wav = to_wav16k(args.audio)
     try:
-        for run in range(1, args.runs + 1):
-            print(f"--- run {run}/{args.runs} ---")
+        for i in range(1, args.runs + 1):
+            run = i + args.run_offset
+            print(f"--- run {run} ---")
             result = transcribe(model, wav)
             base = os.path.join(args.outdir, f"{stem}__parakeet__run{run}")
 

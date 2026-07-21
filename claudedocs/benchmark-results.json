@@ -18,13 +18,31 @@
    "chars": 144,
    "reference_chars": 148
   },
-  "whisper-vad": {
-   "cer": 0.1032,
+  "turbo": {
+   "cer": 0.0,
    "runs_identical": true,
    "distinct_outputs": 1,
-   "repetition_score": 0.0764,
+   "repetition_score": 0.0515,
    "window_loops": 0,
-   "chars": 158,
+   "chars": 137,
+   "reference_chars": 148
+  },
+  "kotoba": {
+   "cer": 0.1097,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0496,
+   "window_loops": 0,
+   "chars": 122,
+   "reference_chars": 148
+  },
+  "kotoba30": {
+   "cer": 0.3226,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.1682,
+   "window_loops": 0,
+   "chars": 108,
    "reference_chars": 148
   }
  },
@@ -47,13 +65,31 @@
    "chars": 102,
    "reference_chars": 121
   },
-  "whisper-vad": {
+  "turbo": {
    "cer": 0.0172,
    "runs_identical": true,
    "distinct_outputs": 1,
-   "repetition_score": 0.3675,
+   "repetition_score": 0.3396,
    "window_loops": 0,
-   "chars": 118,
+   "chars": 107,
+   "reference_chars": 121
+  },
+  "kotoba": {
+   "cer": 0.3103,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.2432,
+   "window_loops": 0,
+   "chars": 75,
+   "reference_chars": 121
+  },
+  "kotoba30": {
+   "cer": 0.1983,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.2169,
+   "window_loops": 0,
+   "chars": 84,
    "reference_chars": 121
   }
  },
@@ -76,13 +112,31 @@
    "chars": 143,
    "reference_chars": 148
   },
-  "whisper-vad": {
+  "turbo": {
    "cer": 0.0,
    "runs_identical": true,
    "distinct_outputs": 1,
-   "repetition_score": 0.0704,
+   "repetition_score": 0.0515,
    "window_loops": 0,
-   "chars": 143,
+   "chars": 137,
+   "reference_chars": 148
+  },
+  "kotoba": {
+   "cer": 0.1226,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0667,
+   "window_loops": 0,
+   "chars": 121,
+   "reference_chars": 148
+  },
+  "kotoba30": {
+   "cer": 0.1032,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.0636,
+   "window_loops": 0,
+   "chars": 111,
    "reference_chars": 148
   }
  },
@@ -105,13 +159,31 @@
    "chars": 173,
    "reference_chars": 148
   },
-  "whisper-vad": {
+  "turbo": {
    "cer": 0.3677,
    "runs_identical": true,
    "distinct_outputs": 1,
-   "repetition_score": 0.1176,
+   "repetition_score": 0.1149,
    "window_loops": 0,
-   "chars": 171,
+   "chars": 176,
+   "reference_chars": 148
+  },
+  "kotoba": {
+   "cer": 0.4516,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.1776,
+   "window_loops": 0,
+   "chars": 153,
+   "reference_chars": 148
+  },
+  "kotoba30": {
+   "cer": 0.5677,
+   "runs_identical": true,
+   "distinct_outputs": 1,
+   "repetition_score": 0.1812,
+   "window_loops": 0,
+   "chars": 139,
    "reference_chars": 148
   }
  }
