@@ -1,0 +1,13 @@
+# Dependabot バージョン更新の設定
+# 方針: 既定3日のクールダウンは受け入れ（明示）、メジャー更新のみ30日に伸ばす。
+# セキュリティ更新はクールダウン対象外で即時（GitHub 仕様）。
+# 記事: https://bugattialpha.com/trends/dependabot-default-cooldown-3days/
+version: 2
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 3
+      semver-major-days: 30
