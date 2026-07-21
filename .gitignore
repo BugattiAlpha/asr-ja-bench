@@ -23,3 +23,7 @@ docs/superpowers/
 data/gaintest/
 data/gaintest_results/
 claudedocs/mictest-*.json
+data/speed_results/
+
+# 記事埋め込み用に書き出した音声（サイト側の資産）
+data/publish_audio/
