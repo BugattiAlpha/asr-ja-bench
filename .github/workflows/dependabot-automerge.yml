@@ -1,0 +1,33 @@
+# Dependabot の PR のうち patch 更新だけを auto-merge に予約する。
+#
+# 方針（記事: https://bugattialpha.com/trends/dependabot-default-cooldown-3days/）:
+#   - cooldown は既定の3日を受け入れ、major だけ30日に伸ばす（.github/dependabot.yml）
+#   - 無人でマージしてよいのは semver-patch のみ。minor / major は手動レビュー
+#   - --auto なので、master の必須ステータスチェック（CI / test）が green になるまでマージされない
+#
+# 構成は GitHub 公式の "Automating Dependabot with GitHub Actions" の例に準拠。
+name: Dependabot auto-merge
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'BugattiAlpha/asr-ja-bench'
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: patch 更新だけ auto-merge を予約する
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
