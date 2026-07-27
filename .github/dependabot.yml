@@ -11,3 +11,14 @@ updates:
     cooldown:
       default-days: 3
       semver-major-days: 30
+    # torch / torchaudio は tool.uv.sources で cu124 インデックスに固定している。
+    # そのチャンネルは torch 2.6.0 で更新が止まっており（2026-07-27 実測。収録は
+    # 2.4.0〜2.6.0 のみ）、Dependabot が PyPI の最新 2.13.0 へ上げようとするたび
+    # uv が cu124 の中で見つけられず dependency_file_not_resolvable で失敗していた。
+    # ベンチマークの測定条件を勝手に動かさない意味でも、この2つは手動更新にする。
+    # 注意: ignore はバージョン更新だけでなくセキュリティ更新のPRも止める。
+    # 更新するときは CUDA チャンネルの切り替えとセットで、全モデルを測り直す。
+    # 経緯: Obsidian Decisions/2026-07-27-asr-ja-bench-dependabot-automerge
+    ignore:
+      - dependency-name: "torch"
+      - dependency-name: "torchaudio"
