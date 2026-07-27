@@ -14,7 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v9
+      # setup-uv は v8 以降、メジャーだけの浮動タグ（v9）を打っていないのでパッチまで書く。
+      - uses: astral-sh/setup-uv@v9.0.0
 
       # Dependabot が pyproject.toml だけ書き換えて uv.lock を更新し損ねた PR を落とす。
       - name: uv.lock と pyproject.toml の整合
