@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # setup-uv は v8 以降、メジャーだけの浮動タグ（v9）を打っていないのでパッチまで書く。
+      - uses: astral-sh/setup-uv@v9.0.0
+
+      # Dependabot が pyproject.toml だけ書き換えて uv.lock を更新し損ねた PR を落とす。
+      - name: uv.lock と pyproject.toml の整合
+        run: uv lock --check
+
+      # tests/ が実際に読むのは cer.py / metrics.py / report_real.py の3本で、
+      # 依存は pykakasi だけ。uv sync すると torch(cu124) と nemo で数GB落とすことになるので、
+      # --no-project で必要な2つだけ入れて回す。
+      - name: テスト
+        run: uv run --no-project --python 3.12 --with pytest --with pykakasi python -m pytest -q
