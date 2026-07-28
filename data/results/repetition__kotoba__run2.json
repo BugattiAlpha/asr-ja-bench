@@ -35,6 +35,6 @@
  "units": [],
  "model": "kotoba-tech/kotoba-whisper-v2.0-faster",
  "chunk_length": 15,
- "elapsed_sec": 0.764,
+ "elapsed_sec": 0.772,
  "audio_sec": 31.74
 }

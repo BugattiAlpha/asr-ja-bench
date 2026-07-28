@@ -14,22 +14,28 @@ dependencies = [
     "ml-dtypes>=0.5.1",
     "nemo-toolkit[asr]>=2.7.3",
     "pykakasi>=2.3.0",
-    "torch>=2.6.0",
-    "torchaudio>=2.6.0",
+    "torch>=2.13.0",
+    "torchaudio>=2.11.0",
 ]
 
 
 # PyTorch の CUDA ビルド用インデックス。explicit = true にして torch/torchaudio だけに
 # 限定する（既定インデックスにすると setuptools 等の共通パッケージまでここから解決され、
 # PyPI 側のバージョンが見えなくなって解決に失敗する）。
+#
+# cu124 → cu126 へ切り替えた（2026-07-28）。cu124 の収録は torch 2.4.0〜2.6.0 で更新が
+# 止まっており、PyPI の最新（2.13.0）を取りに行けず Dependabot が毎週失敗していた。
+# cu126 には cp312/win_amd64 の torch 2.13.0 がある（実測）。
+# torchaudio は 2.11.0 が最終版で、以降 torch とバージョンが揃わない。
+# 経緯と再測定結果: Obsidian Decisions/2026-07-28-cuda-channel-cu126-torch-upgrade
 [[tool.uv.index]]
-name = "pytorch-cu124"
-url = "https://download.pytorch.org/whl/cu124"
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
 explicit = true
 
 [tool.uv.sources]
-torch = { index = "pytorch-cu124" }
-torchaudio = { index = "pytorch-cu124" }
+torch = { index = "pytorch-cu126" }
+torchaudio = { index = "pytorch-cu126" }
 
 [dependency-groups]
 dev = [

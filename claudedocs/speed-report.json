@@ -3,60 +3,60 @@
   "model": "nvidia/parakeet-tdt_ctc-0.6b-ja",
   "audio_sec": 109.204,
   "runs": [
-   2.291,
-   2.251,
-   2.255,
-   2.26,
-   2.24
+   0.878,
+   0.867,
+   0.864,
+   0.874,
+   0.852
   ],
-  "median_sec": 2.255,
-  "rtf": 0.0206,
-  "speedup_vs_realtime": 48.4,
+  "median_sec": 0.867,
+  "rtf": 0.0079,
+  "speedup_vs_realtime": 126.0,
   "chars": 554
  },
  "whisper": {
   "model": "large-v3",
   "audio_sec": 109.204,
   "runs": [
-   9.958,
-   10.11,
-   10.108,
-   10.183,
-   9.998
+   6.979,
+   7.017,
+   6.976,
+   6.957,
+   7.017
   ],
-  "median_sec": 10.108,
-  "rtf": 0.0926,
-  "speedup_vs_realtime": 10.8,
+  "median_sec": 6.979,
+  "rtf": 0.0639,
+  "speedup_vs_realtime": 15.6,
   "chars": 573
  },
  "turbo": {
   "model": "large-v3-turbo",
   "audio_sec": 109.204,
   "runs": [
-   3.251,
-   3.362,
-   3.323,
-   3.371,
-   3.313
+   2.322,
+   2.369,
+   2.339,
+   2.352,
+   2.366
   ],
-  "median_sec": 3.323,
-  "rtf": 0.0304,
-  "speedup_vs_realtime": 32.9,
+  "median_sec": 2.352,
+  "rtf": 0.0215,
+  "speedup_vs_realtime": 46.4,
   "chars": 567
  },
  "kotoba": {
   "model": "kotoba-tech/kotoba-whisper-v2.0-faster",
   "audio_sec": 109.204,
   "runs": [
-   3.38,
-   3.51,
-   3.523,
-   3.519,
-   3.455
+   2.653,
+   2.719,
+   2.676,
+   2.639,
+   2.676
   ],
-  "median_sec": 3.51,
-  "rtf": 0.0321,
-  "speedup_vs_realtime": 31.1,
+  "median_sec": 2.676,
+  "rtf": 0.0245,
+  "speedup_vs_realtime": 40.8,
   "chars": 525
  }
 }

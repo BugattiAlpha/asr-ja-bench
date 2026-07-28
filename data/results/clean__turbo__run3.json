@@ -560,6 +560,7 @@
   }
  ],
  "model": "large-v3-turbo",
- "elapsed_sec": 0.791,
+ "chunk_length": 30,
+ "elapsed_sec": 0.805,
  "audio_sec": 36.3
 }

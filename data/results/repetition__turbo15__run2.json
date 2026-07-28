@@ -361,6 +361,6 @@
  ],
  "model": "large-v3-turbo",
  "chunk_length": 15,
- "elapsed_sec": 0.928,
+ "elapsed_sec": 0.93,
  "audio_sec": 31.74
 }

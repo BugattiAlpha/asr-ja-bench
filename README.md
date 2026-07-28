@@ -81,7 +81,13 @@ uv run pytest
 - faster-whisper 1.2.1 / `large-v3` / `compute_type=float16` / `beam_size=5` / `language="ja"`
   / `condition_on_previous_text=False` / `no_speech_threshold=0.6` / `log_prob_threshold=-1.0`
   / `compression_ratio_threshold=2.4`
-- NeMo 2.5.0 / `nvidia/parakeet-tdt_ctc-0.6b-ja`
+- NeMo 2.7.3 / `nvidia/parakeet-tdt_ctc-0.6b-ja`
+- torch 2.13.0+cu126 / torchaudio 2.11.0+cu126（2026-07-28 に cu124 / torch 2.6.0 から更新）
+
+CUDA チャンネルを上げても **CER は変わらなかった**（合成音声4条件は完全一致、実録音は
+`v2_broadcast`×turbo の1組だけが動いたが、この組は旧環境でも実行ごとに 0.2996〜0.3230 と
+揺れるもので、新環境も同じ帯に収まる）。速度は parakeet だけ約16%速くなり
+（同日・同条件で 1.01秒 → 0.87秒）、CTranslate2 で動く whisper 系3つは変わらない。
 
 モデルは `HF_HOME` のキャッシュへ落ちる。
 
@@ -107,13 +113,13 @@ CUDA 版 torch のためにインデックスを足すと、以後 `setuptools` 
 
 ```toml
 [[tool.uv.index]]
-name = "pytorch-cu124"
-url = "https://download.pytorch.org/whl/cu124"
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
 explicit = true
 
 [tool.uv.sources]
-torch = { index = "pytorch-cu124" }
-torchaudio = { index = "pytorch-cu124" }
+torch = { index = "pytorch-cu126" }
+torchaudio = { index = "pytorch-cu126" }
 ```
 
 **3. onnx と ml_dtypes の不整合** — `AttributeError: module 'ml_dtypes' has no attribute 'float4_e2m1fn'`。
