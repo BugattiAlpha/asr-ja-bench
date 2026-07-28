@@ -573,5 +573,8 @@
    "end": 35.84,
    "text": "。"
   }
- ]
+ ],
+ "model": "nvidia/parakeet-tdt_ctc-0.6b-ja",
+ "elapsed_sec": 0.518,
+ "audio_sec": 36.3
 }

@@ -421,6 +421,6 @@
  ],
  "model": "large-v3",
  "chunk_length": 15,
- "elapsed_sec": 17.368,
+ "elapsed_sec": 1.965,
  "audio_sec": 31.74
 }

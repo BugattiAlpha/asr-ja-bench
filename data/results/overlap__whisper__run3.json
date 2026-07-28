@@ -683,5 +683,9 @@
    "end": 35.5,
    "text": "います"
   }
- ]
+ ],
+ "model": "large-v3",
+ "chunk_length": 30,
+ "elapsed_sec": 2.525,
+ "audio_sec": 36.3
 }
