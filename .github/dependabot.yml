@@ -22,3 +22,6 @@ updates:
     ignore:
       - dependency-name: "torch"
       - dependency-name: "torchaudio"
+    # 2026-07-28: auto-merge の無人成立を実測するため、このファイルの更新で
+    # 更新ジョブの即時再実行を誘発している（uv.lock の pytest を 9.1.0 へ落としてある）。
+    # 実測が終わったらこのコメントは消す。
