@@ -36,7 +36,7 @@ dev = [
     # 下限を最新（9.1.1）より1つ古い 9.1.0 に置いている。Dependabot の patch 更新PRが
     # auto-merge 経路を通って無人でマージされるかを実測するための意図的な設定で、
     # 実測が終わったら Dependabot 自身の PR が 9.1.1 へ戻す。
-    "pytest>=9.1.0",
+    "pytest>=9.1.1",
 ]
 
 [tool.uv]
