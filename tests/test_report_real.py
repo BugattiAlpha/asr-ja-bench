@@ -31,12 +31,20 @@ PUBLISHED = {
 RESULTS = os.path.join(ROOT, "data", "mictest_results")
 
 
-def _load(name: str, config: str):
+def _load_runs(name: str, config: str):
+    """その組み合わせの全 run を読む。
+
+    run1 だけを見ると、実行ごとに出力が揺れる組み合わせ（実測では
+    v2_broadcast×turbo）で「たまたま run1 がこの値だった」を公開値として
+    固定してしまう。torch 2.6→2.13 の更新時に、精度は変わっていないのに
+    このテストだけが落ちて発覚した。
+    """
     paths = sorted(glob.glob(os.path.join(RESULTS, f"{name}__{config}__run*.json")))
-    if not paths:
-        return None
-    with open(paths[0], encoding="utf-8") as fh:
-        return json.load(fh)
+    runs = []
+    for path in paths:
+        with open(path, encoding="utf-8") as fh:
+            runs.append(json.load(fh))
+    return runs
 
 
 @pytest.fixture(scope="module")
@@ -66,12 +74,26 @@ def references():
 def test_published_cer_is_reproduced(references, name, config, expected):
     import report_real
 
-    run = _load(name, config)
-    if run is None:
+    runs = _load_runs(name, config)
+    if not runs:
         pytest.skip(f"{name}__{config} の結果が無い環境")
-    got = report_real.score(references[name], run["text"])["cer"]
-    assert round(got, 3) == pytest.approx(expected, abs=0.001), (
-        f"{name}/{config}: 公開値 {expected} に対し {got:.4f}"
+
+    cers = [report_real.score(references[name], run["text"])["cer"] for run in runs]
+    rounded = [round(c, 3) for c in cers]
+
+    # 全 run が同じ出力なら、公開値と一致することを厳密に見る。
+    if len({run["text"] for run in runs}) == 1:
+        assert rounded[0] == pytest.approx(expected, abs=0.001), (
+            f"{name}/{config}: 公開値 {expected} に対し {cers[0]:.4f}（全 run 同一）"
+        )
+        return
+
+    # 出力が実行ごとに揺れる組み合わせは、公開値がその実測の幅に収まっていれば良しとする。
+    # 幅から外れたら、揺らぎではなく本当に何かが変わっている。
+    lo, hi = min(rounded), max(rounded)
+    assert lo - 0.001 <= expected <= hi + 0.001, (
+        f"{name}/{config}: 公開値 {expected} が実測の幅 {lo}〜{hi} の外にある"
+        f"（各 run: {[f'{c:.4f}' for c in cers]}）"
     )
 
 
@@ -99,7 +121,7 @@ def test_pins_actually_run_when_data_is_present():
         1
         for name, row in PUBLISHED.items()
         for config in row
-        if _load(name, config) is not None
+        if _load_runs(name, config)
     )
     assert loadable > 0, "実測データがあるのに公開値のピンが1件も実行されていない"
 
