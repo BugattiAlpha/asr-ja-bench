@@ -3,10 +3,15 @@ name = "asr-ja-bench"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-# 上限を 3.14 未満にしている理由: 依存元の cu124 インデックスが配っている wheel は
-# cp310〜cp313 までで、Python 3.14 では torch を一切入れられない（2026-07-27 実測）。
-# 上限なしだと解決器が 3.14 の分岐まで計算し、uv.lock に入れられない環境の行が増える。
-# cu124 に cp314 の wheel が出たら上限を上げる。
+# requires-python に 3.14 未満の上限を置いている。上限なしだと解決器が 3.14 の分岐まで
+# 計算し、uv.lock に入れられない環境の行が増える。
+#
+# 当初の理由は「cu124 インデックスが配る wheel は cp310〜cp313 までで、Python 3.14 では
+# torch を一切入れられない」ことだった（2026-07-27 実測）。cu126 へ移してこの理由は消えて
+# おり、torch 2.13.0 / torchaudio 2.11.0 とも cp314 の win_amd64 wheel がある（2026-07-29 実測）。
+# 現在も上限を残しているのは、torch 以外（ctranslate2 / ml-dtypes / nemo-toolkit）の 3.14 対応を
+# 確認していないため。外すときは上限を上げて uv lock を実走し、解決だけでなく推論まで通ることを
+# 確かめる（依存の requires-python はいずれも >= 指定で、3.14 を metadata では拒んでいない）。
 requires-python = ">=3.12,<3.14"
 dependencies = [
     "datasets>=3.0",
