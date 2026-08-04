@@ -14,7 +14,7 @@ readme = "README.md"
 # 確かめる（依存の requires-python はいずれも >= 指定で、3.14 を metadata では拒んでいない）。
 requires-python = ">=3.12,<3.14"
 dependencies = [
-    "datasets>=3.0",
+    "datasets>=5.0.1",
     "faster-whisper>=1.2.1",
     "ml-dtypes>=0.5.1",
     "nemo-toolkit[asr]>=2.7.3",
